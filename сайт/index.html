@@ -111,12 +111,11 @@
 
         .slider {
             position: relative;
-            width: 50px; /* размер ползунка */
-            height: 25px; /* размер ползунка */
-            border-radius: 50px; /* круглые края */
+            width: 50px;
+            height: 25px;
+            border-radius: 50px;
             background-color: #ccc;
             cursor: pointer;
-            border: none; /* Убираем контур */
         }
 
         .slider .slider-circle {
@@ -132,17 +131,15 @@
         }
 
         .slider[data-theme="dark"] {
-            background-color: #333; /* Темный фон при включении темной темы */
+            background-color: #333;
         }
 
         .slider[data-theme="dark"] .slider-circle {
-            left: 30px; /* Позиция круга в темной теме */
+            left: 30px;
         }
-
     </style>
 </head>
 <body>
-
     <!-- Кнопка-гамбургер -->
     <div class="menu-toggle" onclick="toggleMenu()">
         <div></div>
@@ -158,6 +155,12 @@
         </div>
     </div>
 
+    <!-- Новый блок -->
+    <div class="container">
+        <h1>Hello World</h1>
+        <p>I'm hosted with GitHub Pages.</p>
+    </div>
+
     <div class="container">
         <img src="жабки.png" alt="Аватарка" class="avatar">
         <h1>Я Шишкин Никита Евгеньевич</h1>
@@ -169,16 +172,6 @@
     </div>
 
     <script>
-        // Установка темы по системным предпочтениям
-        function applySystemTheme() {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (prefersDark) {
-                setDarkTheme();
-            } else {
-                setLightTheme();
-            }
-        }
-
         function setLightTheme() {
             document.body.setAttribute('data-theme', 'light');
             document.getElementById('themeSlider').setAttribute('data-theme', 'light');
@@ -198,31 +191,19 @@
             }
         }
 
-        // Меню
         function toggleMenu() {
             const menu = document.getElementById('menu');
             menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         }
 
-        // Загрузка и отображение правил
-        function loadRules() {
-            fetch('rules.docx')
-                .then(response => response.arrayBuffer())
-                .then(buffer => {
-                    mammoth.convertToHtml({ arrayBuffer: buffer })
-                        .then(result => {
-                            document.getElementById('rulesContent').innerHTML = result.value;
-                            document.getElementById('rulesContainer').style.display = 'block';
-                        });
-                });
-        }
-
-        // Загрузка правил при старте страницы
         window.onload = function() {
-            loadRules();
-            applySystemTheme();
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+                setDarkTheme();
+            } else {
+                setLightTheme();
+            }
         };
     </script>
-
 </body>
 </html>
