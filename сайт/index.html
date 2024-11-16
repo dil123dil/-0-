@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакты</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <style>
+        :root {
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --card-background: #fff;
+            --menu-color: #333;
+            --button-hover: #e5e5e5;
+        }
+        [data-theme="dark"] {
+            --background-color: #333;
+            --text-color: #f9f9f9;
+            --card-background: #444;
+            --menu-color: #f9f9f9;
+            --button-hover: #555;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            margin: 50px auto;
+            padding: 20px;
+            max-width: 600px;
+            background: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 20px auto;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        .button {
+            display: block;
+            width: 90%;
+            max-width: 300px;
+            margin: 10px auto;
+            padding: 10px;
+            text-decoration: none;
+            color: white;
+            background-color: #5cb85c;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #4cae4c;
+        }
+        /* Меню */
+        .menu-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .menu-toggle div {
+            width: 30px;
+            height: 4px;
+            background-color: var(--menu-color);
+            margin: 5px 0;
+            transition: background-color 0.3s;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            background: var(--card-background);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            text-align: left;
+            width: 200px;
+        }
+        .dropdown-menu a {
+            display: block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: background-color 0.3s;
+        }
+        .dropdown-menu a:hover {
+            background: var(--button-hover);
+        }
+
+        /* Ползунок для переключения тем */
+        .slider-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .slider {
+            position: relative;
+            width: 50px; /* размер ползунка */
+            height: 25px; /* размер ползунка */
+            border-radius: 50px; /* круглые края */
+            background-color: #ccc;
+            cursor: pointer;
+            border: none; /* Убираем контур */
+        }
+
+        .slider .slider-circle {
+            position: absolute;
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 15px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .slider[data-theme="dark"] {
+            background-color: #333; /* Темный фон при включении темной темы */
+        }
+
+        .slider[data-theme="dark"] .slider-circle {
+            left: 30px; /* Позиция круга в темной теме */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Кнопка-гамбургер -->
+    <div class="menu-toggle" onclick="toggleMenu()">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <!-- Выпадающее меню -->
+    <div class="dropdown-menu" id="menu">
+        <div class="slider-container">
+            <div class="slider" id="themeSlider" onclick="toggleTheme()" data-theme="dark">
+                <div class="slider-circle"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <img src="жабки.png" alt="Аватарка" class="avatar">
+        <h1>Я Шишкин Никита Евгеньевич</h1>
+        <a href="https://wa.me/message/O57ZFNVOZWB5J1" class="button">WhatsApp</a>
+        <a href="https://t.me/Shishkin_Nikitos" class="button">Telegram</a>
+        <a href="mailto:example@example.com" class="button">Email</a>
+        <a href="https://signal.me/#eu/fcJzwqXSsItqLEeIhunVSqX8HnUtDChUvVih_9janyk8n7ET13ZKhYWWrV-hu7jT" class="button">Signal</a>
+        <a href="rules.docx" class="button">Правила общения</a>
+    </div>
+
+    <script>
+        // Установка темы по системным предпочтениям
+        function applySystemTheme() {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+                setDarkTheme();
+            } else {
+                setLightTheme();
+            }
+        }
+
+        function setLightTheme() {
+            document.body.setAttribute('data-theme', 'light');
+            document.getElementById('themeSlider').setAttribute('data-theme', 'light');
+        }
+
+        function setDarkTheme() {
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('themeSlider').setAttribute('data-theme', 'dark');
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.getElementById('themeSlider').getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                setLightTheme();
+            } else {
+                setDarkTheme();
+            }
+        }
+
+        // Меню
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Загрузка и отображение правил
+        function loadRules() {
+            fetch('rules.docx')
+                .then(response => response.arrayBuffer())
+                .then(buffer => {
+                    mammoth.convertToHtml({ arrayBuffer: buffer })
+                        .then(result => {
+                            document.getElementById('rulesContent').innerHTML = result.value;
+                            document.getElementById('rulesContainer').style.display = 'block';
+                        });
+                });
+        }
+
+        // Загрузка правил при старте страницы
+        window.onload = function() {
+            loadRules();
+            applySystemTheme();
+        };
+    </script>
+
+</body>
+</html>
