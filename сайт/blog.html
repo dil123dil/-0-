@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простой Блог</title>
+    <style>
+        :root {
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --card-background: #fff;
+            --button-color: #5cb85c;
+            --button-hover: #4cae4c;
+            --post-border: #ddd;
+        }
+
+        [data-theme="dark"] {
+            --background-color: #121212;
+            --text-color: #e0e0e0;
+            --card-background: #1e1e1e;
+            --button-color: #6abf69;
+            --button-hover: #5eac5e;
+            --post-border: #555;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar-container img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+
+        .post {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: var(--card-background);
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--post-border);
+            position: relative;
+        }
+
+        .post-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+        }
+
+        .post-content {
+            font-size: 16px;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+
+        .post-menu {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .post-menu .menu-icon {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .post-menu .menu-icon div {
+            width: 5px;
+            height: 5px;
+            background-color: var(--text-color);
+            border-radius: 50%;
+            margin: 2px;
+        }
+
+        .post-menu .dropdown {
+            display: none;
+            position: absolute;
+            top: 25px;
+            right: 0;
+            background: var(--card-background);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .post-menu:hover .dropdown {
+            display: block;
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: background-color 0.3s;
+        }
+
+        .dropdown a:hover {
+            background: var(--button-hover);
+        }
+
+        .menu-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .menu-toggle div {
+            width: 30px;
+            height: 4px;
+            background-color: var(--text-color);
+            margin: 5px 0;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            background: var(--card-background);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            text-align: left;
+            width: 200px;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-menu a:hover {
+            background: var(--button-hover);
+        }
+
+        .slider-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .slider {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            border-radius: 50px;
+            background-color: #ccc;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider .slider-circle {
+            position: absolute;
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 15px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .slider[data-theme="dark"] {
+            background-color: #333;
+        }
+
+        .slider[data-theme="dark"] .slider-circle {
+            left: 30px;
+        }
+
+        #editor.hidden {
+            display: none;
+        }
+
+        #postContent {
+            width: 100%;
+            height: 100px;
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="menu-toggle" onclick="toggleMenu()">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div class="dropdown-menu" id="menu">
+        <div class="slider-container">
+            <div class="slider" id="themeSlider" onclick="toggleTheme()" data-theme="light">
+                <div class="slider-circle"></div>
+            </div>
+        </div>
+        <a href="index.html">На главную</a>
+        <a href="#" onclick="toggleEditor()">Редактировать блог</a>
+    </div>
+
+    <div class="container">
+        <div class="avatar-container">
+            <img id="avatar" src="default-avatar.png" alt="Аватарка">
+            <p id="description">Описание вашего блога...</p>
+        </div>
+
+        <div id="posts"></div>
+
+        <div id="editor" class="hidden">
+            <div class="edit-panel">
+                <h2>Редактировать блог</h2>
+                <input type="file" id="avatarInput" accept="image/*" onchange="updateAvatar()">
+                <textarea id="descriptionInput" placeholder="Измените описание..." oninput="updateDescription()"></textarea>
+                <h3>Добавить новый пост</h3>
+                <input type="text" id="postTitle" placeholder="Заголовок">
+                <textarea id="postContent" placeholder="Содержание"></textarea>
+                <button onclick="addPost()">Добавить пост</button>
+                <h3>Удалить все посты</h3>
+                <button onclick="clearPosts()">Удалить всё</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const correctPassword = "1234";
+        let editorOpen = false;
+        let menuOpen = false;
+
+        function toggleEditor() {
+    showPasswordModal(() => {
+        const editor = document.getElementById('editor');
+        editor.classList.toggle('hidden');
+    });
+}
+
+        function toggleMenu() {
+            menuOpen = !menuOpen;
+            const menu = document.getElementById('menu');
+            menu.style.display = menuOpen ? 'block' : 'none';
+        }
+
+        function updateAvatar() {
+            const fileInput = document.getElementById('avatarInput');
+            const avatar = document.getElementById('avatar');
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    avatar.src = e.target.result;
+                    localStorage.setItem('avatar', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function loadAvatar() {
+            const savedAvatar = localStorage.getItem('avatar');
+            if (savedAvatar) {
+                document.getElementById('avatar').src = savedAvatar;
+            }
+        }
+
+        function updateDescription() {
+            const description = document.getElementById('descriptionInput').value;
+            document.getElementById('description').textContent = description;
+            localStorage.setItem('description', description);
+        }
+
+        function loadDescription() {
+            const savedDescription = localStorage.getItem('description');
+            if (savedDescription) {
+                document.getElementById('description').textContent = savedDescription;
+                document.getElementById('descriptionInput').value = savedDescription;
+            }
+        }
+
+        function addPost() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            if (!title || !content) return alert('Заполните все поля');
+            const posts = JSON.parse(localStorage.getItem('posts')) || [];
+            posts.push({ title, content });
+            localStorage.setItem('posts', JSON.stringify(posts));
+            renderPosts();
+        }
+
+        function renderPosts() {
+            const posts = JSON.parse(localStorage.getItem('posts')) || [];
+            const postsContainer = document.getElementById('posts');
+            postsContainer.innerHTML = '';
+            posts.forEach((post, index) => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+                postElement.innerHTML = `
+                    <div class="post-title">${post.title}</div>
+                    <div class="post-content">${post.content}</div>
+                    <div class="post-menu">
+                        <div class="menu-icon">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <div class="dropdown">
+                            <a href="#" onclick="editPost(${index})">Редактировать</a>
+                            <a href="#" onclick="deletePost(${index})">Удалить</a>
+                        </div>
+                    </div>
+                `;
+                postsContainer.appendChild(postElement);
+            });
+        }
+
+        function clearPosts() {
+            localStorage.removeItem('posts');
+            renderPosts();
+        }
+
+        function deletePost(index) {
+            const posts = JSON.parse(localStorage.getItem('posts')) || [];
+            posts.splice(index, 1);
+            localStorage.setItem('posts', JSON.stringify(posts));
+            renderPosts();
+        }
+
+        function editPost(index) {
+    showPasswordModal(() => {
+        const posts = JSON.parse(localStorage.getItem('posts')) || [];
+        const post = posts[index];
+        const newTitle = prompt('Измените заголовок:', post.title);
+        const newContent = prompt('Измените содержание:', post.content);
+        if (newTitle !== null && newContent !== null) {
+            posts[index] = { title: newTitle, content: newContent };
+            localStorage.setItem('posts', JSON.stringify(posts));
+            renderPosts();
+        }
+    });
+}
+
+        function applySystemTheme() {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const systemTheme = prefersDark ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', systemTheme);
+            document.getElementById('themeSlider').setAttribute('data-theme', systemTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            document.getElementById('themeSlider').setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        window.onload = function () {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.body.setAttribute('data-theme', savedTheme);
+                document.getElementById('themeSlider').setAttribute('data-theme', savedTheme);
+            } else {
+                applySystemTheme();
+            }
+            loadAvatar();
+            loadDescription();
+            renderPosts();
+        };
+    </script>
+    <script type="module">
+        import { showPasswordModal } from './passwordCheck.js';
+    
+        // Обернуть функции редактирования в проверку пароля
+        function toggleEditor() {
+            showPasswordModal(() => {
+                const editor = document.getElementById('editor');
+                editor.classList.toggle('hidden');
+            });
+        }
+    
+        function editPost(index) {
+            showPasswordModal(() => {
+                const posts = JSON.parse(localStorage.getItem('posts')) || [];
+                const post = posts[index];
+                const newTitle = prompt('Измените заголовок:', post.title);
+                const newContent = prompt('Измените содержание:', post.content);
+                if (newTitle !== null && newContent !== null) {
+                    posts[index] = { title: newTitle, content: newContent };
+                    localStorage.setItem('posts', JSON.stringify(posts));
+                    renderPosts();
+                }
+            });
+        }
+    
+        window.toggleEditor = toggleEditor;
+        window.editPost = editPost;
+    </script>    
+    <script type="module" src="./passwordCheck.js"></script>
+</body>
+</html>
